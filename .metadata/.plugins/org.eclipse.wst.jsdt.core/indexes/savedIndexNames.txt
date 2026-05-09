@@ -1,0 +1,2 @@
+INDEX VERSION 1.4+D:\Java_Full_Stack\antigravity_finance_managment_system\.metadata\.plugins\org.eclipse.wst.jsdt.core\indexes
+1022065782.index

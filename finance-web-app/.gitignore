@@ -1,0 +1,8 @@
+target/
+.settings/
+.classpath
+.project
+*.class
+.tools/
+*.war
+.DS_Store
