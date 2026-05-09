@@ -11,9 +11,9 @@ public class DBConnection {
     public static Connection getConnection() throws SQLException, ClassNotFoundException {
         Driver d = new com.mysql.cj.jdbc.Driver();
         DriverManager.registerDriver(d);
-        String url = System.getenv("DB_URL") != null ? System.getenv("DB_URL") : "jdbc:mysql://localhost:3306/finance_db";
+        String url = System.getenv("DB_URL") != null ? System.getenv("DB_URL") : "jdbc:mysql://trolley.proxy.rlwy.net:40732/railway";
         String user = System.getenv("DB_USER") != null ? System.getenv("DB_USER") : "root";
-        String password = System.getenv("DB_PASSWORD") != null ? System.getenv("DB_PASSWORD") : "root";
+        String password = System.getenv("DB_PASSWORD") != null ? System.getenv("DB_PASSWORD") : "byKTpdzThPNJZYkSLHVBhfUhhiBsiFvr";
         return DriverManager.getConnection(url, user, password);
     }
 }
