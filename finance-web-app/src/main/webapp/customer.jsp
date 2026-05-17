@@ -97,11 +97,11 @@
                                 hasRecords = true;
                     %>
                                         <tr>
-                                            <td><%= rs.getInt("id") %></td>
-                                            <td><%= rs.getString("type") %></td>
-                                            <td style="color: #10b981; font-weight: 500;">&#8377;<%= String.format("%,.0f", rs.getDouble("amount")) %></td>
-                                            <td><%= rs.getString("description") %></td>
-                                            <td><%= rs.getDate("date") %></td>
+                                            <td data-label="ID"><%= rs.getInt("id") %></td>
+                                            <td data-label="Type"><%= rs.getString("type") %></td>
+                                            <td data-label="Amount" style="color: #10b981; font-weight: 500;">&#8377;<%= String.format("%,.0f", rs.getDouble("amount")) %></td>
+                                            <td data-label="Description"><%= rs.getString("description") %></td>
+                                            <td data-label="Date"><%= rs.getDate("date") %></td>
                                         </tr>
                     <%
                             }

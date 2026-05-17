@@ -87,14 +87,14 @@
                                 while(uRs.next()) {
                         %>
                                     <tr style="border-bottom: 1px solid #374151;">
-                                        <td style="padding: 10px;"><%= uRs.getInt("id") %></td>
-                                        <td style="padding: 10px;"><%= uRs.getString("username") %></td>
-                                        <td style="padding: 10px;">
+                                        <td data-label="ID" style="padding: 10px;"><%= uRs.getInt("id") %></td>
+                                        <td data-label="Username" style="padding: 10px;"><%= uRs.getString("username") %></td>
+                                        <td data-label="Role" style="padding: 10px;">
                                             <span style="padding: 4px 8px; border-radius: 12px; font-size: 0.8rem; background: <%= "Admin".equals(uRs.getString("role")) ? "#3b82f6" : ("Collector".equals(uRs.getString("role")) ? "#8b5cf6" : "#10b981") %>;">
                                                 <%= uRs.getString("role") %>
                                             </span>
                                         </td>
-                                        <td style="padding: 10px;">
+                                        <td data-label="Action" style="padding: 10px;">
                                             <% if (!uRs.getString("username").equals(session.getAttribute("username"))) { %>
                                                 <a href="DeleteUserServlet?id=<%= uRs.getInt("id") %>" style="color: #ef4444; text-decoration: none; font-size: 0.875rem;" onclick="return confirm('Delete this user?');">Delete</a>
                                             <% } else { %>
@@ -154,10 +154,10 @@
                                 double remainingAmount = loanAmount - paidAmount;
                     %>
                                     <tr>
-                                        <td><%= rs.getString("username") %></td>
-                                        <td style="font-weight: 500;">&#8377;<%= String.format("%,.0f", loanAmount) %></td>
-                                        <td style="color: #10b981; font-weight: 500;">&#8377;<%= String.format("%,.0f", paidAmount) %></td>
-                                        <td style="color: <%= remainingAmount > 0 ? "#ef4444" : "#10b981" %>; font-weight: 500;">&#8377;<%= String.format("%,.0f", remainingAmount) %></td>
+                                        <td data-label="Customer Name"><%= rs.getString("username") %></td>
+                                        <td data-label="Loan Amount" style="font-weight: 500;">&#8377;<%= String.format("%,.0f", loanAmount) %></td>
+                                        <td data-label="Paid Amount" style="color: #10b981; font-weight: 500;">&#8377;<%= String.format("%,.0f", paidAmount) %></td>
+                                        <td data-label="Remaining Amount" style="color: <%= remainingAmount > 0 ? "#ef4444" : "#10b981" %>; font-weight: 500;">&#8377;<%= String.format("%,.0f", remainingAmount) %></td>
                                     </tr>
                     <%
                             }
