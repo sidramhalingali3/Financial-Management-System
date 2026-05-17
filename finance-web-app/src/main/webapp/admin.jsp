@@ -65,55 +65,57 @@
             
             <div class="card" style="flex: 2; min-width: 300px; padding: 20px; background: rgba(255, 255, 255, 0.05); border-radius: 12px; max-height: 400px; overflow-y: auto;">
                 <h3 style="margin-top: 0;">System Users</h3>
-                <table style="width: 100%; border-collapse: collapse;">
-                    <thead>
-                        <tr style="text-align: left; border-bottom: 1px solid #374151;">
-                            <th style="padding: 10px;">ID</th>
-                            <th style="padding: 10px;">Username</th>
-                            <th style="padding: 10px;">Role</th>
-                            <th style="padding: 10px;">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <%
-                            Connection uConn = null;
-                            PreparedStatement uPst = null;
-                            ResultSet uRs = null;
-                            try {
-                                uConn = DBConnection.getConnection();
-                                String uSql = "SELECT id, username, role FROM users ORDER BY id DESC";
-                                uPst = uConn.prepareStatement(uSql);
-                                uRs = uPst.executeQuery();
-                                while(uRs.next()) {
-                        %>
-                                    <tr style="border-bottom: 1px solid #374151;">
-                                        <td data-label="ID" style="padding: 10px;"><%= uRs.getInt("id") %></td>
-                                        <td data-label="Username" style="padding: 10px;"><%= uRs.getString("username") %></td>
-                                        <td data-label="Role" style="padding: 10px;">
-                                            <span style="padding: 4px 8px; border-radius: 12px; font-size: 0.8rem; background: <%= "Admin".equals(uRs.getString("role")) ? "#3b82f6" : ("Collector".equals(uRs.getString("role")) ? "#8b5cf6" : "#10b981") %>;">
-                                                <%= uRs.getString("role") %>
-                                            </span>
-                                        </td>
-                                        <td data-label="Action" style="padding: 10px;">
-                                            <% if (!uRs.getString("username").equals(session.getAttribute("username"))) { %>
-                                                <a href="DeleteUserServlet?id=<%= uRs.getInt("id") %>" style="color: #ef4444; text-decoration: none; font-size: 0.875rem;" onclick="return confirm('Delete this user?');">Delete</a>
-                                            <% } else { %>
-                                                <span style="color: #6b7280; font-size: 0.875rem;">You</span>
-                                            <% } %>
-                                        </td>
-                                    </tr>
-                        <%
+                <div class="table-responsive" style="margin-top: 0; border: none;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="text-align: left; border-bottom: 1px solid #374151;">
+                                <th style="padding: 10px;">ID</th>
+                                <th style="padding: 10px;">Username</th>
+                                <th style="padding: 10px;">Role</th>
+                                <th style="padding: 10px;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <%
+                                Connection uConn = null;
+                                PreparedStatement uPst = null;
+                                ResultSet uRs = null;
+                                try {
+                                    uConn = DBConnection.getConnection();
+                                    String uSql = "SELECT id, username, role FROM users ORDER BY id DESC";
+                                    uPst = uConn.prepareStatement(uSql);
+                                    uRs = uPst.executeQuery();
+                                    while(uRs.next()) {
+                            %>
+                                        <tr style="border-bottom: 1px solid #374151;">
+                                            <td data-label="ID" style="padding: 10px;"><%= uRs.getInt("id") %></td>
+                                            <td data-label="Username" style="padding: 10px;"><%= uRs.getString("username") %></td>
+                                            <td data-label="Role" style="padding: 10px;">
+                                                <span style="padding: 4px 8px; border-radius: 12px; font-size: 0.8rem; background: <%= "Admin".equals(uRs.getString("role")) ? "#3b82f6" : ("Collector".equals(uRs.getString("role")) ? "#8b5cf6" : "#10b981") %>;">
+                                                    <%= uRs.getString("role") %>
+                                                </span>
+                                            </td>
+                                            <td data-label="Action" style="padding: 10px;">
+                                                <% if (!uRs.getString("username").equals(session.getAttribute("username"))) { %>
+                                                    <a href="DeleteUserServlet?id=<%= uRs.getInt("id") %>" style="color: #ef4444; text-decoration: none; font-size: 0.875rem;" onclick="return confirm('Delete this user?');">Delete</a>
+                                                <% } else { %>
+                                                    <span style="color: #6b7280; font-size: 0.875rem;">You</span>
+                                                <% } %>
+                                            </td>
+                                        </tr>
+                            <%
+                                    }
+                                } catch (Exception e) {
+                                    out.println("<tr><td colspan='3'>Error: " + e.getMessage() + "</td></tr>");
+                                } finally {
+                                    if(uRs != null) try { uRs.close(); } catch(Exception e){}
+                                    if(uPst != null) try { uPst.close(); } catch(Exception e){}
+                                    if(uConn != null) try { uConn.close(); } catch(Exception e){}
                                 }
-                            } catch (Exception e) {
-                                out.println("<tr><td colspan='3'>Error: " + e.getMessage() + "</td></tr>");
-                            } finally {
-                                if(uRs != null) try { uRs.close(); } catch(Exception e){}
-                                if(uPst != null) try { uPst.close(); } catch(Exception e){}
-                                if(uConn != null) try { uConn.close(); } catch(Exception e){}
-                            }
-                        %>
-                    </tbody>
-                </table>
+                            %>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 

@@ -82,7 +82,7 @@
                 </thead>
                 <tbody>
                     <%
-                        String currentUsername = (String) session.getAttribute("username");
+                        currentUsername = (String) session.getAttribute("username");
                         Connection conn = null;
                         PreparedStatement pst = null;
                         ResultSet rs = null;
