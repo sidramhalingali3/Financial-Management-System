@@ -13,7 +13,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>System Loans - Finance Management</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
     <div class="container">
@@ -28,7 +28,7 @@
             </div>
         </div>
 
-        <div class="table-responsive">
+        <div class="table-container">
             <table>
                 <thead>
                     <tr>

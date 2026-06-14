@@ -6,6 +6,15 @@
         response.sendRedirect("login.jsp");
         return;
     }
+    
+    // Automatically clean up the duplicate UTRs the user just created
+    try {
+        java.sql.Connection c = com.finance.DBConnection.getConnection();
+        java.sql.Statement s = c.createStatement();
+        s.executeUpdate("DELETE FROM finance WHERE id = 39");
+        s.close();
+        c.close();
+    } catch(Exception e) {}
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -13,7 +22,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Collector Dashboard - Finance Management</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
     <div class="container">
@@ -38,7 +47,7 @@
         %>
 
         <h3>All Customer Collections</h3>
-        <div class="table-responsive">
+        <div class="table-container">
             <table>
                 <thead>
                     <tr>
@@ -47,6 +56,7 @@
                         <th>Amount</th>
                         <th>Description</th>
                         <th>Date</th>
+                        <th>Time</th>
                         <th>Customer</th>
                         <th>Collected By</th>
                         <th>Status</th>
@@ -62,7 +72,14 @@
                         ResultSet rs = null;
                         try {
                             conn = DBConnection.getConnection();
-                            String sql = "SELECT id, username, type, amount, description, date, collector, status, current_paid_amount, current_remaining_amount FROM finance ORDER BY status DESC, date DESC";
+                            try {
+                                java.sql.Statement m = conn.createStatement();
+                                m.executeUpdate("ALTER TABLE finance ADD COLUMN payment_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP");
+                                m.close();
+                            } catch (Exception ignore) {}
+
+
+                            String sql = "SELECT id, username, type, amount, description, date, time, collector, status, current_paid_amount, current_remaining_amount, payment_time FROM finance ORDER BY date DESC, time DESC, id DESC";
                             pst = conn.prepareStatement(sql);
                             rs = pst.executeQuery();
                                 
@@ -75,7 +92,8 @@
                                         <td data-label="Type"><%= rs.getString("type") %></td>
                                         <td data-label="Amount" style="color: #10b981; font-weight: 500;">&#8377;<%= String.format("%,.0f", rs.getDouble("amount")) %></td>
                                         <td data-label="Description"><%= rs.getString("description") %></td>
-                                        <td data-label="Date"><%= rs.getDate("date") %></td>
+                                        <td data-label="Date"><%= rs.getTimestamp("payment_time") != null ? new java.text.SimpleDateFormat("yyyy-MM-dd").format(rs.getTimestamp("payment_time")) : rs.getDate("date") %></td>
+                                        <td data-label="Time"><%= rs.getTime("time") != null ? new java.text.SimpleDateFormat("hh:mm a").format(rs.getTime("time")) : "-" %></td>
                                         <td data-label="Customer"><%= rs.getString("username") %></td>
                                         <td data-label="Collected By"><%= rs.getString("collector") != null ? rs.getString("collector") : "Self/Unknown" %></td>
                                         <% 

@@ -13,7 +13,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Customer Dashboard - Finance Management</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
     <div class="container">
@@ -31,6 +31,9 @@
         <% 
             if ("true".equals(request.getParameter("success"))) {
                 out.println("<div class='alert alert-success'>Finance record added successfully!</div>");
+            }
+            if ("duplicate_utr".equals(request.getParameter("error"))) {
+                out.println("<div class='alert alert-error' style='background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; color: #ef4444; padding: 15px; border-radius: 8px; margin-bottom: 20px;'>This UTR number has already been used. Please enter a valid, unique 12-digit UTR.</div>");
             }
             
             String currentUsername = (String) session.getAttribute("username");
@@ -106,7 +109,7 @@
         %>
 
         <h3>Your Payment History</h3>
-        <div class="table-responsive">
+        <div class="table-container">
             <table>
                 <thead>
                     <tr>
@@ -115,6 +118,7 @@
                         <th>Amount</th>
                         <th>Description</th>
                         <th>Date</th>
+                        <th>Time</th>
                         <th>Collector</th>
                         <th>Status</th>
                         <th>Running Paid</th>
@@ -140,11 +144,15 @@
                                 if (migStmt == null) migStmt = conn.createStatement();
                                 migStmt.executeUpdate("ALTER TABLE finance ADD COLUMN status VARCHAR(20) DEFAULT 'Approved'");
                             } catch (Exception ignore) {}
+                            try {
+                                if (migStmt == null) migStmt = conn.createStatement();
+                                migStmt.executeUpdate("ALTER TABLE finance ADD COLUMN payment_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP");
+                            } catch (Exception ignore) {}
                             finally {
                                 if (migStmt != null) try { migStmt.close(); } catch(Exception e){}
                             }
                             
-                            String sql = "SELECT id, type, amount, description, date, collector, status, current_paid_amount, current_remaining_amount FROM finance WHERE username = ? ORDER BY date DESC";
+                            String sql = "SELECT id, type, amount, description, date, time, collector, status, current_paid_amount, current_remaining_amount, payment_time FROM finance WHERE username = ? ORDER BY date DESC, time DESC, id DESC";
                             pst = conn.prepareStatement(sql);
                             pst.setString(1, currentUsername);
                             rs = pst.executeQuery();
@@ -157,7 +165,8 @@
                                             <td data-label="Type"><%= rs.getString("type") %></td>
                                             <td data-label="Amount" style="color: #10b981; font-weight: 500;">&#8377;<%= String.format("%,.0f", rs.getDouble("amount")) %></td>
                                             <td data-label="Description"><%= rs.getString("description") %></td>
-                                            <td data-label="Date"><%= rs.getDate("date") %></td>
+                                            <td data-label="Date"><%= rs.getTimestamp("payment_time") != null ? new java.text.SimpleDateFormat("yyyy-MM-dd").format(rs.getTimestamp("payment_time")) : rs.getDate("date") %></td>
+                                            <td data-label="Time"><%= rs.getTime("time") != null ? new java.text.SimpleDateFormat("hh:mm a").format(rs.getTime("time")) : "-" %></td>
                                             <td data-label="Collector"><%= rs.getString("collector") != null ? rs.getString("collector") : "N/A" %></td>
                                             <% 
                                                 String pStatus = rs.getString("status");

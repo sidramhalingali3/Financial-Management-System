@@ -35,6 +35,7 @@ public class AddFinanceServlet extends HttpServlet {
         String username = (String) session.getAttribute("username");
         if ("Collector".equals(role)) {
             username = request.getParameter("customerUsername");
+            if (username != null) username = username.trim();
         }
 
         try (Connection conn = DBConnection.getConnection()) {
@@ -50,9 +51,9 @@ public class AddFinanceServlet extends HttpServlet {
             java.sql.Statement migStmt = null;
             try {
                 migStmt = conn.createStatement();
-                migStmt.executeUpdate("ALTER TABLE finance ADD COLUMN status VARCHAR(20) DEFAULT 'Approved'");
+                try { migStmt.executeUpdate("ALTER TABLE finance ADD COLUMN status VARCHAR(20) DEFAULT 'Approved'"); } catch (Exception ignore) {}
+                try { migStmt.executeUpdate("ALTER TABLE finance MODIFY COLUMN time TIME DEFAULT CURRENT_TIME"); } catch (Exception ignore) {}
             } catch (Exception ignore) {
-                // Ignore if column already exists
             } finally {
                 if (migStmt != null) try { migStmt.close(); } catch(Exception e){}
             }
@@ -63,9 +64,21 @@ public class AddFinanceServlet extends HttpServlet {
             if ("Collector".equals(role)) {
                 collectorName = (String) session.getAttribute("username"); // The logged in collector
                 paymentStatus = "Approved";
+            } else {
+                // Verify UTR is unique for customers
+                String checkSql = "SELECT id FROM finance WHERE description = ?";
+                try (PreparedStatement checkPst = conn.prepareStatement(checkSql)) {
+                    checkPst.setString(1, description);
+                    try (java.sql.ResultSet checkRs = checkPst.executeQuery()) {
+                        if (checkRs.next()) {
+                            response.sendRedirect("customer.jsp?error=duplicate_utr");
+                            return;
+                        }
+                    }
+                }
             }
             
-            String sql = "INSERT INTO finance (username, type, amount, description, date, collector, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO finance (username, type, amount, description, date, time, collector, status) VALUES (?, ?, ?, ?, ?, CURRENT_TIME, ?, ?)";
             
             try (PreparedStatement pst = conn.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS)) {
                 pst.setString(1, username);
@@ -84,7 +97,7 @@ public class AddFinanceServlet extends HttpServlet {
                     }
                     
                     if ("Collector".equals(role)) {
-                        String updateLoanSql = "UPDATE loans SET paid_amount = paid_amount + ?, remaining_amount = remaining_amount - ? WHERE username = ?";
+                        String updateLoanSql = "UPDATE loans SET paid_amount = COALESCE(paid_amount, 0) + ?, remaining_amount = COALESCE(remaining_amount, loan_amount) - ? WHERE username = ?";
                         try (PreparedStatement updatePst = conn.prepareStatement(updateLoanSql)) {
                             updatePst.setDouble(1, amount);
                             updatePst.setDouble(2, amount);

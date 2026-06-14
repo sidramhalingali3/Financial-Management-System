@@ -30,15 +30,15 @@ body {
 }
 
 .container {
-    width: 90%;
-    max-width: 1000px;
-    margin: 2rem auto;
+    width: 100%;
+    max-width: 1800px;
+    margin: 1rem auto;
     background: var(--card-bg);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border: 1px solid var(--border-color);
     border-radius: 16px;
-    padding: 2.5rem;
+    padding: 1rem 1.5rem;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
     animation: fadeIn 0.5s ease-out;
 }
@@ -170,8 +170,10 @@ input:focus, select:focus {
     border-color: var(--text-main);
 }
 
-.table-responsive {
-    overflow-x: auto;
+.table-container {
+    overflow: visible;
+    width: 100%;
+    max-width: none;
     margin-top: 1.5rem;
     border-radius: 8px;
     border: 1px solid var(--border-color);
@@ -179,12 +181,17 @@ input:focus, select:focus {
 
 table {
     width: 100%;
+    table-layout: auto;
     border-collapse: collapse;
     text-align: left;
 }
 
 th, td {
-    padding: 1rem;
+    padding: 6px 4px;
+    font-size: 1.0rem;
+    white-space: normal;
+    word-break: break-word;
+    word-wrap: break-word;
     border-bottom: 1px solid var(--border-color);
 }
 
@@ -193,7 +200,7 @@ th {
     font-weight: 600;
     color: var(--text-muted);
     text-transform: uppercase;
-    font-size: 0.75rem;
+    font-size: 1.0rem;
     letter-spacing: 0.05em;
 }
 
@@ -264,7 +271,7 @@ tr:hover td {
     }
 
     /* Convert Tables to Cards on Small Screens */
-    .table-responsive {
+    .table-container {
         border: none;
         overflow-x: hidden;
     }

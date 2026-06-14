@@ -13,7 +13,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - Finance Management</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
     <div class="container">
@@ -78,7 +78,7 @@
         </div>
 
         <h3>Platform Wide Collections</h3>
-        <div class="table-responsive">
+        <div class="table-container">
             <table>
                 <thead>
                     <tr>
@@ -87,6 +87,7 @@
                         <th>Amount</th>
                         <th>Description</th>
                         <th>Date</th>
+                        <th>Time</th>
                         <th>Customer</th>
                         <th>Collected By</th>
                         <th>Status</th>
@@ -102,7 +103,7 @@
                         ResultSet rs = null;
                         try {
                             conn = DBConnection.getConnection();
-                            String sql = "SELECT id, username, type, amount, description, date, collector, status, current_paid_amount, current_remaining_amount FROM finance ORDER BY status DESC, date DESC";
+                            String sql = "SELECT id, username, type, amount, description, date, time, collector, status, current_paid_amount, current_remaining_amount FROM finance ORDER BY status DESC, date DESC, time DESC, id DESC";
                             pst = conn.prepareStatement(sql);
                             rs = pst.executeQuery();
                                 
@@ -116,6 +117,7 @@
                                         <td data-label="Amount" style="color: #10b981; font-weight: 500;">&#8377;<%= String.format("%,.0f", rs.getDouble("amount")) %></td>
                                         <td data-label="Description"><%= rs.getString("description") %></td>
                                         <td data-label="Date"><%= rs.getDate("date") %></td>
+                                        <td data-label="Time"><%= rs.getTime("time") != null ? new java.text.SimpleDateFormat("hh:mm a").format(rs.getTime("time")) : "-" %></td>
                                         <td data-label="Customer"><%= rs.getString("username") %></td>
                                         <td data-label="Collected By"><%= rs.getString("collector") != null ? rs.getString("collector") : "Self/Unknown" %></td>
                                         <% 

@@ -58,7 +58,7 @@ public class VerifyPaymentServlet extends HttpServlet {
                             if (rs.next()) {
                                 double amt = rs.getDouble("amount");
                                 String user = rs.getString("username");
-                                String updateLoanSql = "UPDATE loans SET paid_amount = paid_amount + ?, remaining_amount = remaining_amount - ? WHERE username = ?";
+                                String updateLoanSql = "UPDATE loans SET paid_amount = COALESCE(paid_amount, 0) + ?, remaining_amount = COALESCE(remaining_amount, loan_amount) - ? WHERE username = ?";
                                 try (PreparedStatement updatePst = conn.prepareStatement(updateLoanSql)) {
                                     updatePst.setDouble(1, amt);
                                     updatePst.setDouble(2, amt);

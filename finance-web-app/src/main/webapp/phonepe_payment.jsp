@@ -38,6 +38,38 @@
             // Set today's date
             document.getElementById('date').valueAsDate = new Date();
         }
+
+        async function validateUtr(event) {
+            event.preventDefault(); // Stop normal form submission
+            
+            const utr = document.getElementById('description').value;
+            const btn = document.getElementById('submitBtn');
+            const errorMsg = document.getElementById('utrError');
+            
+            btn.innerText = "Verifying...";
+            btn.disabled = true;
+            
+            try {
+                const response = await fetch('check_utr.jsp?utr=' + encodeURIComponent(utr));
+                const text = await response.text();
+                
+                if (text.trim() === 'true') {
+                    // UTR already exists!
+                    errorMsg.style.display = 'block';
+                    btn.innerText = "Confirm Payment";
+                    btn.disabled = false;
+                    return false;
+                } else {
+                    // Unique, go ahead
+                    errorMsg.style.display = 'none';
+                    document.getElementById('paymentForm').submit();
+                }
+            } catch(e) {
+                // If network fails, just submit normally
+                document.getElementById('paymentForm').submit();
+            }
+            return false;
+        }
     </script>
 </head>
 <body>
@@ -74,7 +106,7 @@
                 <p style="font-size: 0.9rem; margin: 0; color: #ddd;">After successfully paying in your app, please enter the 12-digit UTR/Transaction ID below to confirm your payment.</p>
             </div>
             
-            <form action="AddFinanceServlet" method="post">
+            <form action="AddFinanceServlet" method="post" id="paymentForm" onsubmit="return validateUtr(event)">
                 <input type="hidden" name="type" value="Payment">
                 
                 <div class="form-group">
@@ -85,6 +117,9 @@
                 <div class="form-group">
                     <label for="description">12-digit UTR / Transaction ID</label>
                     <input type="text" id="description" name="description" required placeholder="e.g. 312345678901" pattern="\d{12}" title="Please enter exactly 12 digits for the UTR">
+                    <div id="utrError" style="display:none; color: #ef4444; font-size: 0.85rem; margin-top: 5px; background: rgba(239, 68, 68, 0.1); padding: 5px; border-radius: 4px;">
+                        This UTR number already exists. Please enter a unique 12-digit UTR.
+                    </div>
                 </div>
                 
                 <div class="form-group" style="display:none;">
@@ -92,7 +127,7 @@
                     <input type="date" id="date" name="date" required>
                 </div>
                 
-                <button type="submit" class="btn" style="background-color: #10b981;">Confirm Payment</button>
+                <button type="submit" id="submitBtn" class="btn" style="background-color: #10b981;">Confirm Payment</button>
             </form>
         </div>
     </div>

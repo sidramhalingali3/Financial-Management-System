@@ -53,7 +53,7 @@
             }
             
             // 3. Backfill finance table
-            PreparedStatement updateFin = conn.prepareStatement("UPDATE finance SET current_paid_amount = ?, current_remaining_amount = ? WHERE username = ? AND current_paid_amount = 0");
+            PreparedStatement updateFin = conn.prepareStatement("UPDATE finance SET current_paid_amount = ?, current_remaining_amount = ? WHERE username = ? AND (current_paid_amount = 0 OR current_paid_amount IS NULL)");
             for (int i = 0; i < users.size(); i++) {
                 String u = users.get(i);
                 getPaidPst.setString(1, u);
@@ -71,8 +71,7 @@
                 int updated = updateFin.executeUpdate();
                 out.println("<li>Updated " + updated + " finance records for " + u + "</li>");
             }
-            
-            out.println("<li><b>Fixes complete!</b></li>");
+
         } catch (Exception e) {
             out.println("<li style='color:red;'>Error: " + e.getMessage() + "</li>");
         } finally {
