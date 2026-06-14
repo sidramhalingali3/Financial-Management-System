@@ -52,7 +52,9 @@ public class AddFinanceServlet extends HttpServlet {
             try {
                 migStmt = conn.createStatement();
                 try { migStmt.executeUpdate("ALTER TABLE finance ADD COLUMN status VARCHAR(20) DEFAULT 'Approved'"); } catch (Exception ignore) {}
-                try { migStmt.executeUpdate("ALTER TABLE finance MODIFY COLUMN time TIME DEFAULT CURRENT_TIME"); } catch (Exception ignore) {}
+                try { migStmt.executeUpdate("ALTER TABLE finance ADD COLUMN time TIME"); } catch (Exception ignore) {}
+                try { migStmt.executeUpdate("ALTER TABLE loans ADD COLUMN paid_amount DOUBLE DEFAULT 0"); } catch (Exception ignore) {}
+                try { migStmt.executeUpdate("ALTER TABLE loans ADD COLUMN remaining_amount DOUBLE"); } catch (Exception ignore) {}
             } catch (Exception ignore) {
             } finally {
                 if (migStmt != null) try { migStmt.close(); } catch(Exception e){}
@@ -78,7 +80,7 @@ public class AddFinanceServlet extends HttpServlet {
                 }
             }
             
-            String sql = "INSERT INTO finance (username, type, amount, description, date, time, collector, status) VALUES (?, ?, ?, ?, ?, CURRENT_TIME, ?, ?)";
+            String sql = "INSERT INTO finance (username, type, amount, description, date, time, collector, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             
             try (PreparedStatement pst = conn.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS)) {
                 pst.setString(1, username);
@@ -86,8 +88,9 @@ public class AddFinanceServlet extends HttpServlet {
                 pst.setDouble(3, amount);
                 pst.setString(4, description);
                 pst.setDate(5, sqlDate);
-                pst.setString(6, collectorName);
-                pst.setString(7, paymentStatus);
+                pst.setTime(6, new java.sql.Time(System.currentTimeMillis()));
+                pst.setString(7, collectorName);
+                pst.setString(8, paymentStatus);
                 
                 int result = pst.executeUpdate();
                 if (result > 0) {
