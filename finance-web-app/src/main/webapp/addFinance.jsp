@@ -1,14 +1,34 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
     <% String role=(String) session.getAttribute("role"); if (role==null || !"Collector".equals(role)) { response.sendRedirect("login.jsp"); return; } String backLink="collector.jsp" ; %>
-        <!DOCTYPE html>
-        <html lang="en">
+<%@ page import="java.sql.*" %>
+<%@ page import="com.finance.DBConnection" %>
+<%
+    Connection _conn = null;
+    Statement _stmt = null;
+    try {
+        _conn = DBConnection.getConnection();
+        _stmt = _conn.createStatement();
+        try { _stmt.executeUpdate("ALTER TABLE finance MODIFY id INT AUTO_INCREMENT"); } catch (Exception ignore) {}
+        try { _stmt.executeUpdate("ALTER TABLE finance ADD COLUMN current_paid_amount DECIMAL(10,2)"); } catch (Exception ignore) {}
+        try { _stmt.executeUpdate("ALTER TABLE finance ADD COLUMN current_remaining_amount DECIMAL(10,2)"); } catch (Exception ignore) {}
+        try { _stmt.executeUpdate("ALTER TABLE loans ADD COLUMN paid_amount DECIMAL(10,2)"); } catch (Exception ignore) {}
+        try { _stmt.executeUpdate("ALTER TABLE loans ADD COLUMN remaining_amount DECIMAL(10,2)"); } catch (Exception ignore) {}
+        try { _stmt.executeUpdate("ALTER TABLE loans ADD COLUMN loan_amount DECIMAL(10,2)"); } catch (Exception ignore) {}
+    } catch (Exception ignore) {
+    } finally {
+        if (_stmt != null) try { _stmt.close(); } catch(Exception e) {}
+        if (_conn != null) try { _conn.close(); } catch(Exception e) {}
+    }
+%>
+<!DOCTYPE html>
+<html lang="en">
 
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Add Finance - Finance Management</title>
-            <link rel="stylesheet" href="style.css">
-        </head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Finance - Finance Management</title>
+    <link rel="stylesheet" href="style.css">
+</head>
 
         <body>
             <div class="container login-container" style="max-width: 500px;">

@@ -6,6 +6,26 @@
         return; 
     } 
 %>
+<%@ page import="java.sql.*" %>
+<%@ page import="com.finance.DBConnection" %>
+<%
+    Connection _conn = null;
+    Statement _stmt = null;
+    try {
+        _conn = DBConnection.getConnection();
+        _stmt = _conn.createStatement();
+        try { _stmt.executeUpdate("ALTER TABLE finance MODIFY id INT AUTO_INCREMENT"); } catch (Exception ignore) {}
+        try { _stmt.executeUpdate("ALTER TABLE finance ADD COLUMN current_paid_amount DECIMAL(10,2)"); } catch (Exception ignore) {}
+        try { _stmt.executeUpdate("ALTER TABLE finance ADD COLUMN current_remaining_amount DECIMAL(10,2)"); } catch (Exception ignore) {}
+        try { _stmt.executeUpdate("ALTER TABLE loans ADD COLUMN paid_amount DECIMAL(10,2)"); } catch (Exception ignore) {}
+        try { _stmt.executeUpdate("ALTER TABLE loans ADD COLUMN remaining_amount DECIMAL(10,2)"); } catch (Exception ignore) {}
+        try { _stmt.executeUpdate("ALTER TABLE loans ADD COLUMN loan_amount DECIMAL(10,2)"); } catch (Exception ignore) {}
+    } catch (Exception ignore) {
+    } finally {
+        if (_stmt != null) try { _stmt.close(); } catch(Exception e) {}
+        if (_conn != null) try { _conn.close(); } catch(Exception e) {}
+    }
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
