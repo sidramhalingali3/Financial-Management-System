@@ -40,11 +40,8 @@ public class AddFinanceServlet extends HttpServlet {
 
         try (Connection conn = DBConnection.getConnection()) {
             double amount = Double.parseDouble(amountStr);
-            Date sqlDate;
-            if (dateStr != null && !dateStr.trim().isEmpty()) {
-                sqlDate = Date.valueOf(dateStr);
-            } else {
-                sqlDate = new Date(System.currentTimeMillis());
+            if (dateStr == null || dateStr.trim().isEmpty()) {
+                dateStr = java.time.LocalDate.now(java.time.ZoneId.of("Asia/Kolkata")).toString();
             }
             
             // Auto-migrate database: safely add the status column if it doesn't exist
@@ -87,7 +84,7 @@ public class AddFinanceServlet extends HttpServlet {
                 pst.setString(2, type);
                 pst.setDouble(3, amount);
                 pst.setString(4, description);
-                pst.setDate(5, sqlDate);
+                pst.setString(5, dateStr);
                 
                 // Set time exactly to Indian Standard Time (IST)
                 java.time.LocalTime now = java.time.LocalTime.now(java.time.ZoneId.of("Asia/Kolkata"));

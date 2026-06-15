@@ -72,13 +72,16 @@
                                 placeholder="e.g. Office Supplies, Travel Expense">
                         </div>
 
-                        <% String todayDate = new java.sql.Date(System.currentTimeMillis()).toString(); %>
+                        <% 
+                            java.time.LocalDate realDate = java.time.LocalDate.now(java.time.ZoneId.of("Asia/Kolkata")); 
+                            java.time.LocalDate offsetDate = realDate.plusDays(1); // Offset JDBC UTC shift
+                        %>
                         <div class="form-group" style="padding: 10px; background: rgba(255,255,255,0.05); border-radius: 5px; margin-bottom: 15px;">
                             <span style="color: #aaa; font-size: 0.9rem;">Date (Auto-filled): </span>
-                            <strong style="color: #10b981;"><%= todayDate %></strong>
+                            <strong style="color: #10b981;"><%= realDate.toString() %></strong>
                         </div>
 
-                        <input type="hidden" name="date" value="<%= todayDate %>">
+                        <input type="hidden" name="date" value="<%= offsetDate.toString() %>">
                         <button type="submit" class="btn">Submit Record</button>
             </form>
             </div>

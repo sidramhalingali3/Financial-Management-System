@@ -55,8 +55,6 @@
             // Pre-fill the form amount
             document.getElementById('amount').value = amount;
             
-            // Set today's date
-            document.getElementById('date').valueAsDate = new Date();
         }
 
         async function validateUtr(event) {
@@ -116,7 +114,7 @@
                 <p style="font-size: 0.9rem; color: #999; margin:0 0 10px 0;">Or scan to pay (Laptop Users):</p>
                 <img src="Admin.jpeg?v=2" alt="Scan QR" style="max-width: 150px; border-radius: 8px; border: 2px solid #5f259f;">
                 <p style="font-size: 0.85rem; color: #666; margin: 10px 0 0 0;">UPI ID: <strong>6363882198@sbi</strong></p>
-                <button onclick="document.getElementById('step1').style.display='none'; document.getElementById('step2').style.display='block'; document.getElementById('amount').value=document.getElementById('upiAmount').value; document.getElementById('date').valueAsDate=new Date();" class="btn btn-outline" style="margin-top: 15px; width: 100%;">I have already paid</button>
+                <button onclick="document.getElementById('step1').style.display='none'; document.getElementById('step2').style.display='block'; document.getElementById('amount').value=document.getElementById('upiAmount').value;" class="btn btn-outline" style="margin-top: 15px; width: 100%;">I have already paid</button>
             </div>
         </div>
 
@@ -144,7 +142,10 @@
                 
                 <div class="form-group" style="display:none;">
                     <label for="date">Date</label>
-                    <input type="date" id="date" name="date" required>
+                    <%
+                        java.time.LocalDate istDate = java.time.LocalDate.now(java.time.ZoneId.of("Asia/Kolkata")).plusDays(1);
+                    %>
+                    <input type="date" id="date" name="date" value="<%= istDate.toString() %>" required>
                 </div>
                 
                 <button type="submit" id="submitBtn" class="btn" style="background-color: #10b981;">Confirm Payment</button>
