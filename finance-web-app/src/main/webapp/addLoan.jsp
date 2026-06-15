@@ -30,7 +30,8 @@
                 } else if (error.equals("insert_failed")) {
                     msg = "Failed to assign loan to the customer."; 
                 } else if (error.equals("exception")) {
-                    msg = "System error occurred."; 
+                    String detail = request.getParameter("msg");
+                    msg = "System error occurred." + (detail != null ? " Details: " + detail : ""); 
                 }
                 out.println("<div class='alert alert-error'>" + msg + "</div>");
             }

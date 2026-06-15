@@ -23,6 +23,11 @@
         double amount = Double.parseDouble(amountStr);
         conn = DBConnection.getConnection();
         
+        // Ensure AUTO_INCREMENT is set on loans table (fixes schema issues)
+        try {
+            conn.createStatement().execute("ALTER TABLE loans MODIFY id INT AUTO_INCREMENT");
+        } catch (Exception ignore) {}
+        
         // Erase any previous loan for this user
         String delSql = "DELETE FROM loans WHERE username = ?";
         delPst = conn.prepareStatement(delSql);
@@ -45,7 +50,7 @@
         }
     } catch (Exception e) {
         e.printStackTrace();
-        response.sendRedirect("addLoan.jsp?loanError=exception");
+        response.sendRedirect("addLoan.jsp?loanError=exception&msg=" + java.net.URLEncoder.encode(e.getMessage() != null ? e.getMessage() : "Unknown Error", "UTF-8"));
     } finally {
         if (delPst != null) try { delPst.close(); } catch(Exception e){}
         if (insPst != null) try { insPst.close(); } catch(Exception e){}

@@ -33,6 +33,12 @@ public class AddUserServlet extends HttpServlet {
 
         try {
             Connection conn = DBConnection.getConnection();
+            
+            // Ensure AUTO_INCREMENT is set on users table (fixes potential schema issues)
+            try {
+                conn.createStatement().execute("ALTER TABLE users MODIFY id INT AUTO_INCREMENT");
+            } catch (Exception ignore) {}
+            
             String sql = "INSERT INTO users (username, password, role) VALUES (?, ?, ?)";
             PreparedStatement pst = conn.prepareStatement(sql);
             pst.setString(1, username.trim());
@@ -41,16 +47,16 @@ public class AddUserServlet extends HttpServlet {
             
             int result = pst.executeUpdate();
             if (result > 0) {
-                response.sendRedirect("admin.jsp?userSuccess=true");
+                response.sendRedirect("users.jsp?userSuccess=true");
             } else {
-                response.sendRedirect("admin.jsp?userError=insert_failed");
+                response.sendRedirect("addUser.jsp?userError=insert_failed");
             }
             
             pst.close();
             conn.close();
         } catch (Exception e) {
             e.printStackTrace();
-            response.sendRedirect("admin.jsp?userError=exception");
+            response.sendRedirect("addUser.jsp?userError=exception&msg=" + java.net.URLEncoder.encode(e.getMessage() != null ? e.getMessage() : "Unknown Error", "UTF-8"));
         }
     }
 }
