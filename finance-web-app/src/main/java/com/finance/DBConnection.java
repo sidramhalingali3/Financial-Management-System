@@ -14,7 +14,6 @@ public class DBConnection {
         String url = "jdbc:mysql://acela.proxy.rlwy.net:55794/railway";
         String user = "root";
         String password = "sTbzmPyVSRzYWMmkOkFfseQAuRgQOtry";
-
         return DriverManager.getConnection(url, user, password);
     }
 
